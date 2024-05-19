@@ -1,22 +1,24 @@
 package domain;
 
+import lombok.Getter;
+
+@Getter
 public class Usuario {
     private String nombreUsuario;
+    private String nombre;
     private String contrasenia;
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
 
-    public void setNombreUsuario(String nombreUsuario) {
+
+   private String generarContrasenia(){
+        //TODO
+       return null;
+   }
+
+    public Usuario(String nombreUsuario, String nombre) {
         this.nombreUsuario = nombreUsuario;
-    }
+        this.nombre =nombre;
+        this.contrasenia = generarContrasenia();
 
-    public String getContrasenia() {
-        return contrasenia;
-    }
-
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
     }
 }

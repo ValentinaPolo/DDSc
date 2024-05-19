@@ -4,7 +4,8 @@ import domain.Colaboracion;
 
 public class DonacionDeDinero extends Colaboracion {
 
-    public DonacionDeDinero(String[] data) {
-        super(data);
+
+    public DonacionDeDinero(String fechaColaboracion, Integer cantidad) {
+        super();
     }
 }

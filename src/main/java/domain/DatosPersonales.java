@@ -13,5 +13,8 @@ public class DatosPersonales {
     private String medioDeContacto;
     private Date fechaNacimiento;
     private String direccion;
+    private String mail;
 
+    public DatosPersonales(String tipoDoc, String documento, String nombre, String apellido, String mail) {
+    }
 }
