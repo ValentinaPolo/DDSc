@@ -20,11 +20,11 @@ public class lectorCSV {
 
     private String separador = ",";
 
-    public void lector(String pathArchivoCSV){
+    public void lector(String pathArchivo){
         String linea;
         ArrayList<Colaborador> colaboradores = new ArrayList<>();
         HashMap<String, Colaborador> colaboradorMap = new HashMap<>();
-        try( BufferedReader bufferLectura = new BufferedReader(new FileReader(pathArchivoCSV))){
+        try(BufferedReader bufferLectura = new BufferedReader(new FileReader(pathArchivo))){
             linea = bufferLectura.readLine();
           while (linea != null){
               String data[] = linea.split(separador);
@@ -67,14 +67,13 @@ public class lectorCSV {
                   eniviarCorreo(colaborador);
 
               }
-
           }
+
         }
         catch (IOException e){
             e.printStackTrace();
         };
-
-        }
+    }
 
     private void eniviarCorreo(Colaborador colaborador) {
       try{

@@ -5,9 +5,13 @@ import java.util.ArrayList;
 public class Colaborador {
     private DatosPersonales datosPersonales;
     private Usuario usuario;
-    private ArrayList<Colaboracion> colaboraciones;
+    private ArrayList<Colaboracion> colaboraciones = new ArrayList<>();
 
     public Colaborador(DatosPersonales datosPersonales, Usuario usuario) {
+    }
+
+    public ArrayList<Colaboracion> getColaboraciones() {
+        return colaboraciones;
     }
 
     public void agregarColaboracion(Colaboracion colaboracion) {
@@ -21,4 +25,5 @@ public class Colaborador {
     public Usuario getUsuario() {
         return usuario;
     }
+
 }

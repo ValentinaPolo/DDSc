@@ -14,7 +14,17 @@ public class DatosPersonales {
     private Date fechaNacimiento;
     private String direccion;
     private String mail;
+    private String documento;
+    private String tipoDoc;
+
 
     public DatosPersonales(String tipoDoc, String documento, String nombre, String apellido, String mail) {
+        this.apellido = apellido;
+        this.documento = documento;
+        this.tipoDoc =  tipoDoc;
+        this.nombre = nombre;
+        this.mail = mail;
+
+
     }
 }

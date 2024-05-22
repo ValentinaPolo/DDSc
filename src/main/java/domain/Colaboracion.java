@@ -7,4 +7,9 @@ public abstract class Colaboracion {
     private String cantidad;
     private Colaborador colaborador;
 
+
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
 }
