@@ -17,7 +17,7 @@ import static org.mockito.Mockito.doNothing;
 
 public class MailTests {
         public void testEviarMail(){
-        DatosPersonales datos = new DatosPersonales("DNI", "12345678", "Juan", "Perez", "vpolocurbelo@frba.utn.edu.ar");
+        DatosPersonales datos = new DatosPersonales("DNI", "12345678", "Juan", "Perez", "juanperez@gmail");
         Colaborador colaborador = new Colaborador(datos, null);
         enviarCorreo(colaborador);
     }
