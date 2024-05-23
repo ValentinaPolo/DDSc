@@ -3,57 +3,80 @@ package lectorCsvTests;
 import colaboraciones.DistribuirVianda;
 import colaboraciones.DonacionDeDinero;
 import colaboraciones.DonacionVianda;
-import colaboraciones.EntrgarTarjeta;
+import colaboraciones.EntregarTarjeta;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
 import domain.*;
 
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.SimpleEmail;
+import jakarta.mail.internet.InternetAddress;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LectorTests {
     @Test
-    public void testLeerArchivoCSV() {
-        String csvData = "DNI,12345678,Juan,Perez,juan.perez@example.com,01/01/2023,DINERO,100\n" +
-                "DNI,87654321,Maria,Gomez,maria.gomez@example.com,02/01/2023,DONACION_VIANDAS,50";
-        BufferedReader br = new BufferedReader(new StringReader(csvData));
+    public void testLeerArchivoCSV() throws IOException, ParseException {
+        List<String[]> colaboraciones = new ArrayList<>();
+        colaboraciones.add(new String[]{"DNI", "87654321", "Jose","Hernandez", "jose@gmail", "12/12/2012", "DONACION_VIANDAS", "50"});
+        colaboraciones.add(new String[]{"DNI", "12345678", "Juan","Perez","juanperez@gmail", "01/01/2023", "DINERO", "100"});
 
-        LectorTests lector = new LectorTests();
-        ArrayList<Colaborador> colaboradores = lector.lector(br);
 
+        String archCSV =  System.getProperty("user.home") + "\\Documents\\ISO-Codes.csv";
+        //CSVWriter writer = new CSVWriter(new FileWriter(archCSV));
+
+        //writer.writeAll(colaboraciones);
+        try (CSVWriter writer = new CSVWriter(new FileWriter(archCSV))) {
+            writer.writeAll(colaboraciones);
+        }
+
+
+        ArrayList<Colaborador> colaboradores = lector(archCSV);
         assertEquals(2, colaboradores.size());
-        assertTrue(colaboradores.get(0).getColaboraciones().get(0) instanceof DonacionDeDinero);
-        assertTrue(colaboradores.get(1).getColaboraciones().get(1) instanceof DonacionVianda);
+        assertInstanceOf(DonacionDeDinero.class, colaboradores.get(1).getColaboraciones().get(0));
+        assertInstanceOf(DonacionVianda.class, colaboradores.get(0).getColaboraciones().get(0));
+        assertEquals("DNI", colaboradores.get(0).getDatosPersonales().getTipoDoc());
+        assertEquals("87654321", colaboradores.get(0).getDatosPersonales().getDocumento());
+        assertEquals("Jose", colaboradores.get(0).getDatosPersonales().getNombre());
+        assertEquals("Hernandez", colaboradores.get(0).getDatosPersonales().getApellido());
+        assertEquals("jose@gmail", colaboradores.get(0).getDatosPersonales().getMail());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        //assertEquals(Integer.parseInt("50"), colaboradores.get(0).getColaboraciones().get(0).getCantidad());
+
     }
-    public ArrayList<Colaborador> lector(BufferedReader bufferLectura){
-        String linea;
+    public ArrayList<Colaborador> lector(String pathArchivo) throws FileNotFoundException, IllegalArgumentException {
+        String[] linea;
         ArrayList<Colaborador> colaboradores = new ArrayList<>();
         HashMap<String, Colaborador> colaboradorMap = new HashMap<>();
-        try{
-            linea = bufferLectura.readLine();
-            while (linea != null){
-                String data[] = linea.split(",");
-                String tipoDoc = data[0];
-                String documento = data[1];
-                String nombre = data[2];
-                String apellido = data[3];
-                String mail = data[4];
-                String fechaColaboracion = data[5];
-                String formaColaboracion = data[6];
-                Integer cantidad = Integer.parseInt(data[7]);
+
+        try (CSVReader csvReader = new CSVReader(new FileReader(pathArchivo))) {
+            while ((linea = csvReader.readNext()) != null) {
+                if (linea.length == 0) {
+                    continue;
+                }
+
+                String tipoDoc = linea[0];
+                String documento = linea[1];
+                String nombre = linea[2];
+                String apellido = linea[3];
+                String mail = linea[4];
+                String fechaColaboracion = linea[5];
+                String formaColaboracion = linea[6];
+                Integer cantidad = Integer.parseInt(linea[7]);
                 Colaborador colaborador;
                 Colaboracion colaboracion;
-                switch (formaColaboracion){
+
+                switch (formaColaboracion) {
                     case "DINERO":
                         colaboracion = new DonacionDeDinero(fechaColaboracion, cantidad);
                         break;
@@ -64,33 +87,28 @@ public class LectorTests {
                         colaboracion = new DistribuirVianda(fechaColaboracion, cantidad);
                         break;
                     case "ENTREGA_TARJETAS":
-                        colaboracion = new EntrgarTarjeta(fechaColaboracion, cantidad);
+                        colaboracion = new EntregarTarjeta(fechaColaboracion, cantidad);
+                        break;
                     default:
                         throw new IllegalArgumentException("Colaboracion no valida");
                 }
+
                 String key = tipoDoc + documento;
-                if(colaboradorMap.containsKey(key)){
+                if (colaboradorMap.containsKey(key)) {
                     colaborador = colaboradorMap.get(key);
                     colaborador.agregarColaboracion(colaboracion);
-                }
-                else {
+                } else {
                     DatosPersonales datosPersonales = new DatosPersonales(tipoDoc, documento, nombre, apellido, mail);
                     Usuario usuario = new Usuario(mail, nombre);
                     colaborador = new Colaborador(datosPersonales, usuario);
+                    colaborador.agregarColaboracion(colaboracion);
                     colaboradorMap.put(key, colaborador);
                     colaboradores.add(colaborador);
-
-
                 }
-                linea = bufferLectura.readLine();
             }
-
+        } catch (CsvValidationException | IOException e) {
+            throw new RuntimeException(e);
         }
-        catch (IOException e){
-            e.printStackTrace();
-        };
         return colaboradores;
     }
-
 }
-

@@ -3,11 +3,13 @@ package domain;
 import colaboraciones.DistribuirVianda;
 import colaboraciones.DonacionDeDinero;
 import colaboraciones.DonacionVianda;
-import colaboraciones.EntrgarTarjeta;
+import colaboraciones.EntregarTarjeta;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 
-import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,22 +22,21 @@ public class lectorCSV {
 
     private String separador = ",";
 
-    public void lector(String pathArchivo){
-        String linea;
+    public void lector(String pathArchivo) throws FileNotFoundException, IllegalArgumentException {
+        String[] linea = null;
         ArrayList<Colaborador> colaboradores = new ArrayList<>();
         HashMap<String, Colaborador> colaboradorMap = new HashMap<>();
-        try(BufferedReader bufferLectura = new BufferedReader(new FileReader(pathArchivo))){
-            linea = bufferLectura.readLine();
-          while (linea != null){
-              String data[] = linea.split(separador);
-              String tipoDoc = data[0];
-              String documento = data[1];
-              String nombre = data[2];
-              String apellido = data[3];
-              String mail = data[4];
-              String fechaColaboracion = data[5];
-              String formaColaboracion = data[6];
-              Integer cantidad = Integer.parseInt(data[7]);
+        CSVReader csvReader = new CSVReader(new FileReader(pathArchivo));
+        try{
+          while ((linea = csvReader.readNext()) != null){
+              String tipoDoc = linea[0];
+              String documento = linea[1];
+              String nombre = linea[2];
+              String apellido = linea[3];
+              String mail = linea[4];
+              String fechaColaboracion = linea[5];
+              String formaColaboracion = linea[6];
+              Integer cantidad = Integer.parseInt(linea[7]);
               Colaborador colaborador;
               Colaboracion colaboracion;
               switch (formaColaboracion){
@@ -49,7 +50,8 @@ public class lectorCSV {
                       colaboracion = new DistribuirVianda(fechaColaboracion, cantidad);
                       break;
                   case "ENTREGA_TARJETAS":
-                      colaboracion = new EntrgarTarjeta(fechaColaboracion, cantidad);
+                      colaboracion = new EntregarTarjeta(fechaColaboracion, cantidad);
+                      break;
                   default:
                       throw new IllegalArgumentException("Colaboracion no valida");
               }
@@ -68,11 +70,15 @@ public class lectorCSV {
 
               }
           }
+            csvReader.close();
 
         }
         catch (IOException e){
             e.printStackTrace();
-        };
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+        ;
     }
 
     private void eniviarCorreo(Colaborador colaborador) {

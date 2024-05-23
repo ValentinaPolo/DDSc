@@ -8,13 +8,16 @@ public class Colaborador {
     private ArrayList<Colaboracion> colaboraciones = new ArrayList<>();
 
     public Colaborador(DatosPersonales datosPersonales, Usuario usuario) {
+        this.datosPersonales = datosPersonales;
+        this.usuario = usuario;
     }
 
     public ArrayList<Colaboracion> getColaboraciones() {
         return colaboraciones;
     }
 
-    public void agregarColaboracion(Colaboracion colaboracion) {
+    public void agregarColaboracion(Colaboracion colaboracion)
+    {
         this.colaboraciones.add(colaboracion);
     }
 
