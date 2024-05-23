@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static domain.EnviadorMail.enviarConGMail;
+
 public class lectorCSV {
     public lectorCSV(String separador) {
         this.separador = separador;
@@ -82,24 +84,17 @@ public class lectorCSV {
     }
 
     private void eniviarCorreo(Colaborador colaborador) {
-      try{
-          Email email = EnviadorMail.conectaEmail();
-          email.setSubject("Agradecimiento por colaboracion");
-          email.setMsg("Estimado"+colaborador.getDatosPersonales().getNombre()+" "+colaborador.getDatosPersonales().getApellido()+
-                  "Gracias por tu colaboracion,\n\n Te creamos una cuenta. Tus credenciales de acceso son:" +
-                  "Usuario: "+colaborador.getUsuario().getNombreUsuario()+ "\n"
-          +"Contrasenia = "+colaborador.getUsuario().getContrasenia()+"\n\n"+
-                  "Por favor ingrese al sistema y verifique los datos");
-          email.addTo(colaborador.getDatosPersonales().getMail());
-          email.send();
-
-      }
-      catch (EmailException e) {
-          e.printStackTrace();
-      }
+        String destinatario = colaborador.getDatosPersonales().getMail();
+        String asunto = "Agradecimiento por colaboracion";
+        String mensaje = "\"Estimado\"+colaborador.getDatosPersonales().getNombre()+\" \"+colaborador.getDatosPersonales().getApellido()+\n" +
+                "                  \"Gracias por tu colaboracion,\\n\\n Te creamos una cuenta. Tus credenciales de acceso son:\" +\n" +
+                "                  \"Usuario: \"+colaborador.getUsuario().getNombreUsuario()+ \"\\n\"\n" +
+                "          +\"Contrasenia = \"+colaborador.getUsuario().getContrasenia()+\"\\n\\n\"+\n" +
+                "                  \"Por favor ingrese al sistema y verifique los datos\"";
+        enviarConGMail(destinatario, asunto, mensaje);
 
 
-}
+    }
 }
 
 
