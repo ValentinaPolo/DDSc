@@ -1,10 +1,20 @@
 package colaboraciones;
 
-import domain.Colaboracion;
+import domain.Colaborador;
+import lombok.Getter;
 
-public class DonacionVianda extends Colaboracion {
+import java.util.Date;
 
-    public DonacionVianda(String fechaColaboracion, Integer cantidad) {
-        super();
+@Getter
+public class DonacionVianda {
+    private Date fechaColaboracion;
+    private Integer cantidad;
+    private Colaborador colaborador;
+    public DonacionVianda(Date fechaColaboracion, Integer cantidad, Colaborador colaborador) {
+        this.fechaColaboracion = fechaColaboracion;
+        this.cantidad = cantidad;
+        this.colaborador = colaborador;
     }
+
+
 }

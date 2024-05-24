@@ -1,10 +1,29 @@
 package colaboraciones;
 
-import domain.Colaboracion;
 import domain.Colaborador;
 
-public class DonacionDeDinero extends Colaboracion {
-    public DonacionDeDinero(String fechaColaboracion, Integer cantidad) {
-        super();
+import java.util.Date;
+
+public class DonacionDeDinero  {
+    private Date fechaColaboracion;
+    private Integer cantidad;
+    private Colaborador colaborador;
+
+    public Date getFechaColaboracion() {
+        return fechaColaboracion;
+    }
+
+    public  Integer getCantidad() {
+        return cantidad;
+    }
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    public DonacionDeDinero(Date fechaColaboracion, Integer cantidad, Colaborador colaborador) {
+        this.fechaColaboracion = fechaColaboracion;
+        this.cantidad = cantidad;
+        this.colaborador = colaborador;
     }
 }
