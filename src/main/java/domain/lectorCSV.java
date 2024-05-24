@@ -31,7 +31,7 @@ public class lectorCSV {
     private String separador = ",";
     @Getter
     private Map<String, Object> colaboraciones = new HashMap<>();
-    public void lector(String pathArchivo) throws FileNotFoundException, IllegalArgumentException {
+    public void lector(String pathArchivo) throws FileNotFoundException, RuntimeException {
         String[] linea = null;
         HashMap<String, Colaborador> colaboradorMap = new HashMap<>();
         CSVReader csvReader = new CSVReader(new FileReader(pathArchivo));
@@ -54,11 +54,11 @@ public class lectorCSV {
                   Usuario usuario = new Usuario(mail, nombre);
                   colaborador = new Colaborador(datosPersonales, usuario);
                   colaboradorMap.put(key, colaborador);
-                  //eniviarCorreo(colaborador);
+                  eniviarCorreo(colaborador);
               }
 
               colaborador = colaboradorMap.get(key);
-              String colaboracionKey = key + linea[5];
+              String colaboracionKey = key + sdf.format(fechaColaboracion);
 
               switch (formaColaboracion){
                   case "DINERO":
@@ -86,9 +86,7 @@ public class lectorCSV {
         }
         catch (IOException e){
             e.printStackTrace();
-        } catch (CsvValidationException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
+        } catch (CsvValidationException | ParseException e) {
             throw new RuntimeException(e);
         }
         ;
@@ -97,11 +95,12 @@ public class lectorCSV {
     private void eniviarCorreo(Colaborador colaborador) {
         String destinatario = colaborador.getDatosPersonales().getMail();
         String asunto = "Agradecimiento por colaboracion";
-        String mensaje = "\"Estimado\"+colaborador.getDatosPersonales().getNombre()+\" \"+colaborador.getDatosPersonales().getApellido()+\n" +
-                "                  \"Gracias por tu colaboracion,\\n\\n Te creamos una cuenta. Tus credenciales de acceso son:\" +\n" +
-                "                  \"Usuario: \"+colaborador.getUsuario().getNombreUsuario()+ \"\\n\"\n" +
-                "          +\"Contrasenia = \"+colaborador.getUsuario().getContrasenia()+\"\\n\\n\"+\n" +
-                "                  \"Por favor ingrese al sistema y verifique los datos\"";
+        String mensaje = "\"Estimado "+colaborador.getDatosPersonales().getNombre()+" \n Gracias por tu colaboracion, te creamos una " +
+                "cuenta\n" +
+                " Tus credenciales de acceso son:\" +\n" +
+                "Usuario: "+colaborador.getUsuario().getNombreUsuario() +
+                "\n Contrasenia =" +colaborador.getUsuario().getContrasenia()+
+                " \n Por favor ingrese al sistema y verifique los datos";
         enviarConGMail(destinatario, asunto, mensaje);
 
 
