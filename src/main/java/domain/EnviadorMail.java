@@ -12,7 +12,7 @@ public class EnviadorMail {
 
 
     static String usuario = "congelandoelhambre@gmail.com";
-    static String clave = "congelandoelhambre2024";
+    static String clave = "fwqw awii ukmx ukwz";
 
     public static void enviarConGMail(String destinatario, String asunto, String cuerpo) {
 
